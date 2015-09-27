@@ -1,4 +1,4 @@
-    // подключаем библиотеку
+    // подключаем библиотеки
     #include <dht.h>
     #include <Wire.h>
     #include <BH1750.h>
