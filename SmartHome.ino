@@ -29,7 +29,7 @@
     {        Serial.begin(115200);
 //      return;
 
-//        Serial.begin(9600);
+        //Serial.begin(9600);
         dht11.attach(A0); delay(1000);
         lightMeter.begin();
 
@@ -72,8 +72,8 @@
        
        
         //SendHTMLPageToTCP();
+        UpdateSensors();
         WriteSensorsDataToTCP();
-		UpdateSensors();
 		delay(1000);
     }
  
