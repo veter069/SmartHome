@@ -3,7 +3,7 @@
     #include <Wire.h>
     #include <BH1750.h>
 
-    #define DEBUG 0
+   // #define DEBUG 0
     //     const int BUFFER_SIZE = 128;
    //String HTMLGoodResponse = "HTTP/1.1 200 OK\r\nConnection: close\r\n";
    //String TableStartHTML = "<html><body><table cellpadding=\"5\" style=\"background-color:#440044;border-style:hidden;color:#ffaaff\" align=center><tbody><tr>";
@@ -18,11 +18,11 @@
     int motionPin = 12;
   
     int led = 13;
-    int temperature = 0;
-    int humidity = 0;
-    int light = 0;
+    int temperature = 23;
+    int humidity = 37;
+    int light = 10;
     bool flooded = false;
-    int ws = 0;
+    int ws = 10;
     bool motion;
     
     void setup()
@@ -38,12 +38,12 @@
 
         Serial.println("AT+RST\r\n");   delay(800);
         Serial.println("AT+CWMODE=1\r\n"); delay(800);
-        Serial.println("AT+CIPSTA=\"192.168.1.77\"\r\n"); delay(800);
+        Serial.println("AT+CIPSTA=\"192.168.43.77\"\r\n"); delay(800);
         Serial.println("AT+CIPSTAMAC=\"66:66:66:66:66:88\"\r\n"); delay(800);
-        //Serial.println("AT+CWJAP=\"bias\",\"yamat0nade$ik0Figslomaesh!\"");
+       //Serial.println("AT+CWJAP=\"bias\",\"yamat0nade$ik0Figslomaesh!\"");
         //Serial.println("AT+CWJAP=\"Frosters\",\"!#DidYouTryHard?!A\"\r\n");
-        //Serial.println("AT+CWJAP=\"utelGavno\",\"6058372d5618\"\r\n");
-        Serial.println("AT+CWJAP=\"RTK-110407\",\"ELTX1A019338\"");
+        Serial.println("AT+CWJAP=\"utelGavno\",\"6058372d5618\"\r\n");
+        //Serial.println("AT+CWJAP=\"RTK-110407\",\"ELTX1A019338\"");
 
         
           delay(6000);
@@ -51,6 +51,7 @@
         Serial.println("AT+CIPMUX=1\r\n");
         delay(1000);
         Serial.println("AT+CIPSERVER=1,80\r\n");
+		delay(1000);
     }
      
      
@@ -74,7 +75,7 @@
         //SendHTMLPageToTCP();
         UpdateSensors();
         WriteSensorsDataToTCP();
-		delay(1000);
+		delay(2000);
     }
  
  //String page;
@@ -109,29 +110,32 @@
 //  PrintToTCP(TableParameterFinishHTML);  
 // }
  
-     
+  
 void  WriteSensorsDataToTCP(){
-    String msg = "The temperature in my room is ";
-    msg+=temperature; msg+=" C\r\n";
+	String msg = "Актуальные данные мониторинга: \r\n";
+	PrintToTCP(msg);
+	
+	msg = "Температура: ";
+    msg+=temperature; msg+="C\r\n";
     PrintToTCP(msg);
     
-    msg="The humidity in my room is ";
+	msg="Влажность: ";
     msg+=humidity; msg+=" %\r\n";
     PrintToTCP(msg);
     
-    msg="The light in my room is ";
+	msg="Освещённость: ";
     msg+=light; msg+=" lx\r\n";
     PrintToTCP(msg);
     
-    msg="The room IS ";
-    if(!flooded)msg+= "NOT ";
-    msg+="flooded. (";
+    msg="Затопленность: ";
+    if(!flooded){msg+= "НЕТ (";}
+    else {msg+"ДА (";}
     msg+=ws; msg+=")\r\n";
     PrintToTCP(msg);
     
-    msg="The room IS ";
-    if(!motion)msg+= "NOT ";
-    msg+="inhabited.\r\n";
+    msg="Наличие движения: ";
+    if(!motion){msg+= "НЕТ\r\n";}
+    else{msg+="ДА\r\n";}
     PrintToTCP(msg);
     
     msg="\r\n";
@@ -139,12 +143,11 @@ void  WriteSensorsDataToTCP(){
 }
  
 void PrintToTCP(String str){
-  String msg="\r\nAT+CIPSEND=0,";
-  msg+=str.length();
-  msg+="\r\n";
-  SayToESP(msg, 300, DEBUG);
-  SayToESP(str, 300, DEBUG);
-  delay(300);
+  String cmdmsg="AT+CIPSEND=0,";
+  cmdmsg+=str.length();
+  cmdmsg+="\r\n";
+  SayToESP(cmdmsg, 300);
+  SayToESP(str, 300);
 }
  
  
@@ -182,29 +185,23 @@ void UpdateSensors(){
   }
   
   
-  String SayToESP(String command, const int timeout, boolean debug)
+  String SayToESP(String command, const int timeout/*, boolean debug*/)
 {
     String response = "";
     
-    Serial.print(command); // send the read character to the esp8266
+    Serial.print(command);
     
- //   long int time = millis();
-//    
-//    while( (time+timeout) > millis())
-//    {
-//      while(Serial.available())
-//      {
-//        
-//        // The esp has data so display its output to the serial window 
-//        char c = Serial.read(); // read the next character.
-//        response+=c;
-//      }  
-//    }
-//    
-   // if(debug)
-   // {
-    //  Serial.print(response);
-    //}
+    long int time = millis();
+    
+    while( (time+timeout) > millis())
+    {
+      while(Serial.available())
+      {
+        // The esp has data so display its output to the serial window 
+        char c = Serial.read(); // read the next character.
+        response+=c;
+      }  
+    }
     
     return response;
 }
