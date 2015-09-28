@@ -40,11 +40,7 @@
         Serial.println("AT+CWMODE=1\r\n"); delay(800);
         Serial.println("AT+CIPSTA=\"192.168.43.77\"\r\n"); delay(800);
         Serial.println("AT+CIPSTAMAC=\"66:66:66:66:66:88\"\r\n"); delay(800);
-       //Serial.println("AT+CWJAP=\"bias\",\"yamat0nade$ik0Figslomaesh!\"");
-        //Serial.println("AT+CWJAP=\"Frosters\",\"!#DidYouTryHard?!A\"\r\n");
-        Serial.println("AT+CWJAP=\"utelGavno\",\"6058372d5618\"\r\n");
-        //Serial.println("AT+CWJAP=\"RTK-110407\",\"ELTX1A019338\"");
-
+        Serial.println("AT+CWJAP=\"MyWiFiSSID\",\"MyPassword\"\r\n");
         
           delay(6000);
             blinkcode ();
